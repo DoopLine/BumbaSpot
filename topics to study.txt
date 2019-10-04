@@ -1,0 +1,4 @@
+1. context api.
+2. hooks.
+3. react dnd.
+4. styled Components.
