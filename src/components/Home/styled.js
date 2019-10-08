@@ -1,8 +1,11 @@
 import styled, { css } from 'styled-components';
 
+const sm = '520px';
+const md = '600px';
+
 export const Container = styled.main`
 	padding: 2rem;
-    padding-top: 0;
+	padding-top: 0;
 	height: calc(100% - 6rem);
 	overflow-y: auto;
 `;
@@ -16,7 +19,7 @@ export const Footer = styled.footer`
 	background-color: #009688;
 	justify-content: space-between;
 	color: #fff;
-    font-size: 1.1rem;
+	font-size: 1.1rem;
 	span {
 		display: flex;
 		flex-direction: column;
@@ -36,7 +39,20 @@ export const InfoSection = styled.article`
 	justify-content: flex-end;
 	font-size: 2rem;
 	align-items: center;
-    background-position-y: center;
+	background-position-y: center;
+
+	@media only screen and (max-width: ${sm}) {
+		justify-content: flex-start;
+		background-position-y: bottom;
+		background-position-x: center;
+		align-items: flex-start;
+		margin-bottom: 10rem;
+		background-size: 27rem;
+		height: 40rem;
+	}
+	@media only screen and (max-width: ${md}) {
+		background-size: 27rem;
+	}
 
 	${({ reverse }) =>
 		reverse &&
@@ -51,11 +67,24 @@ export const InfoSection = styled.article`
 			flex-direction: column;
 			align-items: flex-end;
 			justify-content: center;
+
+			@media only screen and (max-width: ${sm}) {
+				align-items: center;
+				padding: 3rem;
+			}
 		`}
 
     h1, h2 {
 		width: 45%;
 		text-align: center;
+
+		@media only screen and (max-width: ${md}) {
+			width: 60%;
+		}
+		@media only screen and (max-width: ${sm}) {
+			width: 100%;
+			/* margin: 2rem 0; */
+		}
 	}
 
 	div {

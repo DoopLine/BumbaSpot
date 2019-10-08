@@ -16,8 +16,8 @@ function App() {
       <NavSide/>
       <div className="wrapper">
         <Header/>
-        {/* <Board/> */}
-        <Home/>
+        <Board/>
+        {/* <Home/> */}
       </div>
       
       <GlobalStyled/>

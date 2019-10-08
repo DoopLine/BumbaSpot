@@ -27,7 +27,7 @@ export default function CardInfoSide({ data, close }) {
 	);
 
 	const [isEditing, toggleIsEditing] = useToggle();
-	const [, toggleIsDeleting] = useToggle(false); 
+	const [, toggleIsDeleting] = useToggle(false);
 	const [hasLabelForm, toggleHasLabelForm] = useToggle();
 
 	const handleEditCardName = (inputVal, listIndex) => {
@@ -40,7 +40,7 @@ export default function CardInfoSide({ data, close }) {
 			toggleHasLabelForm(false);
 		}
 	};
-	const handleRemovingLabel = (id) => {
+	const handleRemovingLabel = id => {
 		removeLabelFromCard(card.id, id, listIndex);
 		toggleIsDeleting();
 	};
@@ -88,7 +88,7 @@ export default function CardInfoSide({ data, close }) {
 									key={id}
 									color={color}
 									title={title}
-									onClick={()=> handleRemovingLabel(id)}
+									onClick={() => handleRemovingLabel(id)}
 								/>
 							))}
 						</div>

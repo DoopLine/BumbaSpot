@@ -11,6 +11,12 @@ export default createGlobalStyle`
         font: 62.5% 'helvetica', sans-serif;
         height: 100%;
     }
+
+    html{
+        @media only screen and (max-width: 778px){
+            font-size: 52.5%;
+        }
+    }
     #root{
         display: flex;
         max-width: 120rem;
