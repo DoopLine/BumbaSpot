@@ -7,7 +7,7 @@ import { Container } from './styled';
 import CircularButton from '../CircularButton';
 import Backdrop from '../Backdrop';
 
-export default function Options({ options }) {
+export default function Options({ options, small= false }) {
 	const [isOpened, toogleIsOpened] = useToggle();
 
 	return (
@@ -16,7 +16,7 @@ export default function Options({ options }) {
 				<Backdrop transparent={true} onClick={() => toogleIsOpened()} />
 			)}
 			<Container>
-				<CircularButton secondary={true} lint='Opções' onClick={toogleIsOpened}>
+				<CircularButton secondary={true} lint='Opções' onClick={toogleIsOpened} small={small}>
 					<MdMoreVert />
 				</CircularButton>
 				{isOpened && (

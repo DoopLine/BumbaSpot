@@ -8,13 +8,13 @@ import CircularButton from '../CircularButton';
 
 import { Container, WrapperFix } from './styled';
 
-export default function CardForm({ listIndex, onSubmit, initInputVal = '' }) {
+export default function CardForm({onSubmit, initInputVal = '', keyName, info}) {
 	const [title, changeTitle, resetTitle] = useFormState(initInputVal);
 	const [error, toggleError] = useToggle();
 
 	const handleAddCard = () => {
 		if (title) {
-			onSubmit(title, listIndex);
+			onSubmit(title, keyName);
 			resetTitle();
 		} else {
 		}
@@ -31,7 +31,7 @@ export default function CardForm({ listIndex, onSubmit, initInputVal = '' }) {
 	return (
 		<Container>
 			<Input
-				title='Descreva a sua tarefa'
+				title={info}
 				value={title}
 				multiline={true}
 				onChange={changeTitle}

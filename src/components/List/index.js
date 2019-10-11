@@ -1,4 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useReducer } from 'react';
+import cardReducer, { actionTypes } from '../../reducers/cardReducer';
+import { actionTypes as listActionTypes } from '../../reducers/listReducer';
 import useToggle from '../../hooks/useToggle';
 import useFormState from '../../hooks/useFormState';
 import { useDrop } from 'react-dnd';
@@ -15,14 +17,15 @@ import ListForm from '../ListForm';
 import Options from '../Options';
 
 export default function List({ data, index }) {
-	const { title, createble, cards, isDone, id } = data;
+	const { title, createble, isDone, id } = data;
 
-	const { moveToList, addCardToList, editList, deleteList } = useContext(
-		BoardContext
-	);
+	const [cards, dispatch] = useReducer(cardReducer, data.cards);
+
+	const { listDispatch } = useContext(BoardContext);
+
 	const [isAdding, toggleIsAdding] = useToggle();
 	const [isEditing, toggleIsEditing] = useToggle();
-	const [newTitle, changeNewTitle, resetNewTitle] = useFormState(title);
+	const [newTitle, changeNewTitle] = useFormState(title);
 	const [newCreateble, changeNewCreateble] = useFormState(
 		createble,
 		'checkbox'
@@ -30,18 +33,19 @@ export default function List({ data, index }) {
 
 	const listOptions = [
 		{ handler: toggleIsEditing, name: 'Editar' },
-		{ handler: () => deleteList(id), name: 'Apagar' },
+		{
+			handler: () => listDispatch({ type: listActionTypes.REMOVE, id }),
+			name: 'Apagar',
+		},
 	];
 
-	const handleAddNewCard = (inputVal, listIndex) => {
-		addCardToList(inputVal, listIndex);
+	const handleAddNewCard = inputVal => {
+		dispatch({ type: actionTypes.CREATE, content: inputVal });
 		toggleIsAdding(false);
 	};
 
 	const handleUpdateList = () => {
-		editList(newTitle, newCreateble, id);
-		// resetNewTitle();
-		// resetNewCreateble();
+		listDispatch({ type: listActionTypes.EDIT, newTitle, newCreateble, id });
 		toggleIsEditing(false);
 	};
 
@@ -54,7 +58,12 @@ export default function List({ data, index }) {
 			const draggedIndex = item.index;
 
 			if (draggedListIndex === targetListIndex) return;
-			moveToList(draggedIndex, draggedListIndex, targetListIndex);
+			listDispatch({
+				type: listActionTypes.MOVE_CARD,
+				fromListIndex: draggedListIndex,
+				fromIndex: draggedIndex,
+				toListIndex: targetListIndex,
+			});
 			item.listIndex = targetListIndex;
 		},
 	});
@@ -91,7 +100,7 @@ export default function List({ data, index }) {
 					<Card key={card.id} index={i} listIndex={index} data={card} />
 				))}
 				{!cards.length && <NoCard>Sem nenhum card</NoCard>}
-				{isAdding && <CardForm listIndex={index} onSubmit={handleAddNewCard} />}
+				{isAdding && <CardForm listIndex={index} onSubmit={handleAddNewCard} info="Digite o titulo do card" />}
 			</ul>
 		</Container>
 	);

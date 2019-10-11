@@ -15,6 +15,7 @@ export const Container = styled.article`
 	animation: ${slidePaper} 1.3s forwards ease;
 	font-size: 1rem;
 	padding: 2rem 1rem;
+	overflow-y: auto;
 
 	h1,
 	h2 {
@@ -39,13 +40,19 @@ export const LabelSection = styled.article`
 		margin: 1rem 0;
 	}
 `;
+export const TaskSection = styled.article`
+	& > p {
+		margin: 1rem 0;
+		font-size: 1.2rem;
+	}
+`;
 export const DescriptionSection = styled.article`
 	p {
 		font-size: 1.2rem;
 		margin: 1rem 0;
+		word-break: break-word;
 	}
 `;
-
 
 export const Progress = styled.progress`
 	-webkit-appearance: none;
@@ -69,12 +76,17 @@ export const TaskItem = styled.div`
 	& > * {
 		margin: 1rem 0;
 	}
-
 `;
 export const Header = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+	button {
+		margin-left: auto;
+		&:nth-child(3) {
+			margin-left: 1rem;
+		}
+	}
 `;
 // export const Header = styled.header`
 // `;

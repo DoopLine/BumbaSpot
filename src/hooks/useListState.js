@@ -2,13 +2,7 @@ import { useState } from "react";
 
 import uuid from 'uuid/v4';
 
-import CardModel from '../models/Card';
-
-// const listReducer = (state, action)=>{
-// 	switch(action.type){
-// 		case: "ADD": 
-// 	}
-// }
+import CardModel from '../models/Card'; 
 
 export default initVal => {
     const [lists, setLists] = useState(initVal);

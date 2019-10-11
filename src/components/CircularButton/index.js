@@ -9,7 +9,7 @@ export default function CircularButton({
 	purse = false,
 	lint = '',
     small = false,
-    secondary = false
+	secondary = false,
 }) {
 	return (
 		<Container

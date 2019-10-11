@@ -9,7 +9,7 @@ export default function Home () {
                 <h1>Seja Bemvindo ao <strong style={{color: '#009688'}}>BumbaSpot</strong></h1>
                 <div>
                     <Button purse={true}>Começar</Button>
-                    <Button secondary={true}>Explorar</Button>
+                    <Button secondary={true}>Meus Boards</Button>
                 </div>
             </InfoSection>
             <InfoSection imgSrc='./static/svg/preparation.svg' reverse={true}>
