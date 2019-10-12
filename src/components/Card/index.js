@@ -1,15 +1,22 @@
 import React, {useRef, useContext} from 'react';
+import { useHistory } from 'react-router-dom';
 import { actionTypes as listActionTypes} from '../../reducers/listReducer';
 import { useDrag, useDrop } from 'react-dnd';
 import { Container, Label } from './styled';
 import uuid from 'uuid/v4';
 
-import BoardContext from '../Board/context';
+import {ListContext} from '../../context/listContext';
 
 export default function List({data, index, listIndex}){
     const {labels, content, img, id} = data;
     const dndRef = useRef();
-    const { listDispatch, openCard} = useContext(BoardContext);
+    const history = useHistory();
+
+    const { dispatch} = useContext(ListContext);
+
+    const openCard = (listIndex, id) => {
+		history.push(`/board/${id}/${listIndex}`,);
+	};
 
     const [{isDragging}, dragRef] = useDrag({
         item: {type: 'CARD', index, listIndex},
@@ -39,7 +46,7 @@ export default function List({data, index, listIndex}){
             if(draggedIndex > targetIndex && draggedTop > targetCenter) return;
 
             // move(draggedIndex, targetIndex, draggedListIndex, targetListIndex);
-            listDispatch({
+            dispatch({
 				type: listActionTypes.MOVE_CARD_TO_CARD,
 				fromListIndex: draggedListIndex,
 				toListIndex: targetListIndex,
@@ -53,6 +60,7 @@ export default function List({data, index, listIndex}){
     });
 
     dragRef(dropRef(dndRef));
+
     return (
         <Container ref={dndRef} isDragging={isDragging} onClick={()=> openCard(listIndex, id)}>
             <header>

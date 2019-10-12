@@ -22,7 +22,7 @@ export const Container = styled.div`
 			font-weight: 500;
 			font-size: 16px;
 			padding: 0 1rem;
-			word-break: break-all;
+			word-break: break-word;
 			max-width: 27rem;
 		}
 	}

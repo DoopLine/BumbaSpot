@@ -1,22 +1,13 @@
 import React from 'react';
-import useToggle from '../../hooks/useToggle';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import uuid from 'uuid/v4';
 import { Container } from './styled';
 
-export default function CheckBox({ title, onChange, checked = false }) {
-	const id = uuid();
-	const [isChecked, toggleIsChecked] = useToggle(checked);
-	
-	const handleOnChange = (e)=>{
-		toggleIsChecked();
-		onChange(e);
-	}
-
+export default function CheckBox({ id = uuid(), title, onChange, checked = false, stroke=false }) {
 	return (
-		<Container htmlFor={id}>
-			<input id={id} type='checkbox' checked={isChecked} onChange={handleOnChange} />
-			{!isChecked ? <MdCheckBoxOutlineBlank /> : <MdCheckBox />}
+		<Container htmlFor={id} stroke={stroke}>
+			<input id={id} type='checkbox' checked={checked} onChange={onChange} />
+			{!checked ? <MdCheckBoxOutlineBlank /> : <MdCheckBox />}
 			{title}
 		</Container>
 	);

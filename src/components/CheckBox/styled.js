@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 
 export const Container = styled.label`
 	display: flex;
@@ -7,6 +7,13 @@ export const Container = styled.label`
 	margin-bottom: 2rem;
 	align-items: center;
 	margin: 0.5rem 0;
+	width: fit-content;
+	cursor: pointer;
+	transition: text-decoration .3s ease-in;
+
+	${({stroke})=> stroke && css`
+		text-decoration: line-through;
+	`}
 	input {
 		position: absolute;
 		width: 0;

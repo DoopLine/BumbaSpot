@@ -1,8 +1,10 @@
-import React, { useReducer } from 'react';
+import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import cardReducer, { actionTypes } from '../../reducers/cardReducer';
+import { cardActionTypes } from '../../reducers/actionTypes';
 import { MdEdit, MdAdd, MdClose } from 'react-icons/md';
 import useToggle from '../../hooks/useToggle';
+
+import { ListContext } from '../../context/listContext';
 
 import {
 	Container,
@@ -26,55 +28,58 @@ import Options from '../Options';
 
 function CardInfoSide() {
 	const history = useHistory();
+	const { lists, dispatch } = useContext(ListContext);
 
-	if(history.location.state === undefined) {
-		console.log('here');
-		history.push("/board");
-	}
-	const { cardId } = useParams();
-	console.log(history.location);
-	// const { lists } = useContext(BoardContext);
-	// console.log(lists);
-	const [cards, dispatch] = useReducer(cardReducer, history.location.state.cards);
-	
-	const card = cards.find(c => c.id === cardId);
-	
+	const { cardId, listIndex } = useParams();
+	const list = lists[listIndex];
+	if (list === undefined) history.push('/*');
+
+	const card = list.cards.find(c => c.id === cardId);
+
+	if (card === undefined) history.push('/*');
+
 	const [isEditingName, toggleIsEditingName] = useToggle();
 	const [isEditingDesc, toggleIsEditingDesc] = useToggle();
 	const [isEditingTask, toggleIsEditingTask] = useToggle();
-	const [, toggleIsDeleting] = useToggle(false);
 	const [hasLabelForm, toggleHasLabelForm] = useToggle();
+
+
+	const doneTasksCount = card.tasks.reduce((acc, cur) => {
+		if (cur.isDone) acc++;
+		return acc;
+	}, 0);
+	const taskProgress = Math.round(doneTasksCount / card.tasks.length * 100);
 
 	const taskOptions = [
 		{
 			handler: () => {
 				dispatch({
-					type: actionTypes.MARK_ALL_TASKS_AS,
+					type: cardActionTypes.MARK_ALL_TASKS_AS,
 					cardId: card.id,
 					state: true,
+					listId: list.id,
 				});
-				toggleIsDeleting();
 			},
 			name: 'Marcar Todas Como Feitas',
 		},
 		{
 			handler: () => {
 				dispatch({
-					type: actionTypes.MARK_ALL_TASKS_AS,
+					type: cardActionTypes.MARK_ALL_TASKS_AS,
 					cardId: card.id,
 					state: false,
+					listId: list.id,
 				});
-				toggleIsDeleting();
 			},
 			name: 'Desmarcar Todas Como Feitas',
 		},
 		{
 			handler: () => {
 				dispatch({
-					type: actionTypes.REMOVE_COMPLETE_TASKS,
+					type: cardActionTypes.REMOVE_COMPLETE_TASKS,
 					cardId: card.id,
+					listId: list.id,
 				});
-				// toggleIsDeleting();
 			},
 			name: 'Remover Todas as Feitas',
 		},
@@ -82,29 +87,38 @@ function CardInfoSide() {
 
 	// Functions
 	const handleEditCard = (inputVal, keyName) => {
-		// debugger;
-		dispatch({ type: actionTypes.EDIT, [keyName]: inputVal, id: card.id });
+		dispatch({
+			type: cardActionTypes.EDIT_CARD,
+			[keyName]: inputVal,
+			cardId: card.id,
+			listId: list.id,
+		});
 		toggleIsEditingName(false);
 		toggleIsEditingDesc(false);
 	};
+
 	const handleCreateLabel = (inputVal, color) => {
 		if (inputVal) {
 			dispatch({
-				type: actionTypes.CREATE_LABEL,
+				type: cardActionTypes.CREATE_LABEL,
 				title: inputVal,
 				id: card.id,
+				listId: list.id,
 				color,
 			});
 			toggleHasLabelForm(false);
 		}
 	};
+
 	const handleRemovingLabel = id => {
+		console.log(id);
+
 		dispatch({
-			type: actionTypes.REMOVE_LABEL,
+			type: cardActionTypes.REMOVE_LABEL,
 			cardId: card.id,
 			labelId: id,
+			listId: list.id,
 		});
-		toggleIsDeleting();
 	};
 
 	return (
@@ -197,9 +211,10 @@ function CardInfoSide() {
 								info='Descreva a tarefa'
 								onSubmit={inputVal => {
 									dispatch({
-										type: actionTypes.CREATE_TASK,
+										type: cardActionTypes.CREATE_TASK,
 										content: inputVal,
 										id: card.id,
+										listId: list.id,
 									});
 									toggleIsEditingTask();
 								}}
@@ -208,22 +223,25 @@ function CardInfoSide() {
 						{!!card.tasks.length && (
 							<TaskItem>
 								<span style={{ display: 'flex' }}>
-									<p style={{ marginRight: '.5rem' }}>15%</p>
-									<Progress value='15' max='100'></Progress>
+									<p style={{ marginRight: '.5rem' }}>{taskProgress}%</p>
+									<Progress value={taskProgress} max='100'></Progress>
 								</span>
 								{card.tasks.map(({ id, content, isDone }) => (
 									<CheckBox
 										onChange={() => {
 											dispatch({
-												type: actionTypes.CHANGE_TASK_STATE,
+												type: cardActionTypes.CHANGE_TASK_STATE,
 												cardId: card.id,
 												taskId: id,
 												state: !isDone,
+												listId: list.id,
 											});
 										}}
 										key={id}
+										id={id}
 										title={content}
 										checked={isDone}
+										stroke={isDone && true}
 									/>
 								))}
 							</TaskItem>
