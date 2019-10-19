@@ -11,7 +11,7 @@ export const Container = styled.label`
 	cursor: pointer;
 	transition: text-decoration .3s ease-in;
 
-	${({stroke})=> stroke && css`
+	${({lineThrough})=> lineThrough && css`
 		text-decoration: line-through;
 	`}
 	input {
@@ -22,6 +22,7 @@ export const Container = styled.label`
 
 	svg{
 		font-size: 1.5rem;
+		min-width: 1.5rem;
 		margin-right: .5rem;
 		cursor: pointer;
 		transition: .5s;

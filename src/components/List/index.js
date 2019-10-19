@@ -1,12 +1,11 @@
 import React, { useContext } from 'react';
-import { cardActionTypes } from '../../reducers/actionTypes';
-import { actionTypes as listActionTypes } from '../../reducers/listReducer';
+import { cardActionTypes, listActionTypes } from '../../reducers/actionTypes';
 import useToggle from '../../hooks/useToggle';
 
 import { useDrop } from 'react-dnd';
 import { MdAdd, MdClose } from 'react-icons/md';
 
-import {ListContext} from '../../context/listContext';
+import { ListContext } from '../../context/listContext';
 
 import { Container, NoCard } from './styled';
 
@@ -27,18 +26,28 @@ export default function List({ data, index }) {
 	const listOptions = [
 		{ handler: toggleIsEditing, name: 'Editar' },
 		{
-			handler: () => dispatch({ type: listActionTypes.REMOVE, id }),
+			handler: () =>
+				dispatch({ type: listActionTypes.REMOVE_LIST, listId: id }),
 			name: 'Apagar',
 		},
 	];
 
 	const handleAddNewCard = inputVal => {
-		dispatch({ type: cardActionTypes.CREATE_CARD, content: inputVal, listId: id });
+		dispatch({
+			type: cardActionTypes.CREATE_CARD,
+			content: inputVal,
+			listId: id,
+		});
 		toggleIsAdding(false);
 	};
 
 	const handleUpdateList = (newTitle, newCreateble) => {
-		dispatch({ type: listActionTypes.EDIT, newTitle, newCreateble, id });
+		dispatch({
+			type: listActionTypes.EDIT_LIST,
+			newTitle,
+			newCreateble,
+			listId: id,
+		});
 		toggleIsEditing(false);
 	};
 
@@ -90,8 +99,13 @@ export default function List({ data, index }) {
 				{cards.map((card, i) => (
 					<Card key={card.id} index={i} listIndex={index} data={card} />
 				))}
-				{(!cards.length && !isAdding) && <NoCard>Sem nenhum card</NoCard>}
-				{isAdding && <CardForm listIndex={index} onSubmit={handleAddNewCard} info="Digite o titulo do card" />}
+				{!cards.length && !isAdding && <NoCard>Sem nenhum card</NoCard>}
+				{isAdding && (
+					<CardForm
+						onSubmit={handleAddNewCard}
+						info='Digite o titulo do card'
+					/>
+				)}
 			</ul>
 		</Container>
 	);

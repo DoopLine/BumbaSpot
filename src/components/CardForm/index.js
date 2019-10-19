@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {MdDone} from 'react-icons/md';
+import { MdDone } from 'react-icons/md';
 import useToggle from '../../hooks/useToggle';
 import useFormState from '../../hooks/useFormState';
 
@@ -8,7 +8,12 @@ import CircularButton from '../CircularButton';
 
 import { Container, WrapperFix } from './styled';
 
-export default function CardForm({onSubmit, initInputVal = '', keyName, info}) {
+export default function CardForm({
+	onSubmit,
+	initInputVal = '',
+	keyName,
+	info,
+}) {
 	const [title, changeTitle, resetTitle] = useFormState(initInputVal);
 	const [error, toggleError] = useToggle();
 
@@ -16,16 +21,15 @@ export default function CardForm({onSubmit, initInputVal = '', keyName, info}) {
 		if (title) {
 			onSubmit(title, keyName);
 			resetTitle();
-		} else {
 		}
 	};
 
 	useEffect(() => {
 		if (title) {
 			toggleError(false);
-		} else {
-			toggleError(true);
+			return;
 		}
+		toggleError(true);
 	}, [title]);
 
 	return (
@@ -38,7 +42,7 @@ export default function CardForm({onSubmit, initInputVal = '', keyName, info}) {
 				hasError={error}></Input>
 			<WrapperFix>
 				<CircularButton onClick={handleAddCard}>
-					<MdDone/>
+					<MdDone />
 				</CircularButton>
 			</WrapperFix>
 		</Container>

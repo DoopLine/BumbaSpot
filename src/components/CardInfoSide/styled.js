@@ -5,7 +5,7 @@ export const Container = styled.article`
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 25rem;
+	width: 30rem;
 	height: 100vh;
 	max-width: 80%;
 	background-color: #fff;
@@ -20,7 +20,7 @@ export const Container = styled.article`
 	h1,
 	h2 {
 		color: #00695c;
-		word-break: break-all;
+		word-break: break-word;
 		padding-right: 2rem;
 	}
 	header {
@@ -51,6 +51,7 @@ export const DescriptionSection = styled.article`
 		font-size: 1.2rem;
 		margin: 1rem 0;
 		word-break: break-word;
+		line-height: 1.7rem;
 	}
 `;
 

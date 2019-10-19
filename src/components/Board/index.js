@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
-import { Switch, Route } from 'react-router-dom';
-import { actionTypes } from '../../reducers/listReducer';
+import { useParams } from 'react-router-dom';
+import { listActionTypes } from '../../reducers/actionTypes';
 import useToggle from '../../hooks/useToggle';
 
 import { MdAdd, MdClose } from 'react-icons/md';
 import List from '../List/index';
 import CircularButton from '../CircularButton';
 import ListForm from '../ListForm';
-import CardInfoSide from '../CardInfoSide';
 
 import { Container, EmptyList } from './styled';
 
@@ -16,19 +15,24 @@ import { ListContext } from '../../context/listContext';
 // const listas = TestLists();
 
 function Board() {
+	const { boardId } = useParams();
+
 	// Visibility vars
-	const [isCreating, toggleIsCreationg] = useToggle(false);
 	let listHasLength;
+	const [isCreating, toggleIsCreationg] = useToggle(false);
 
 	const { lists, dispatch } = useContext(ListContext);
 
-	listHasLength = lists.length !== 0;
+	const Boardlists = lists.filter(_list => _list.boardId === boardId);
+
+	listHasLength = Boardlists.length !== 0;
 
 	const handleCreateList = (title, createble) => {
 		dispatch({
-			type: actionTypes.CREATE,
+			type: listActionTypes.CREATE_LIST,
 			title,
 			createble,
+			boardId,
 		});
 		toggleIsCreationg();
 	};
@@ -36,12 +40,12 @@ function Board() {
 	return (
 		<Container>
 			{!listHasLength && (
-				<EmptyList>
+				<EmptyList imgSrc={require('../../assets/svg/list.svg')}>
 					<p>Crie uma nova lista</p>
 				</EmptyList>
 			)}
 
-			{lists.map((list, i) => (
+			{Boardlists.map((list, i) => (
 				<List key={list.id} index={i} data={list} />
 			))}
 
@@ -56,17 +60,17 @@ function Board() {
 					onSubmit={handleCreateList}
 				/>
 			)}
-			<Switch>
-				<Route exact path='/board/:cardId/:listIndex'>
-					<CardInfoSide />
-				</Route>
-			</Switch>
+
+			{/* <Switch>
+				
+			</Switch> */}
+
 			<CircularButton
 				float={true}
 				purse={!listHasLength && !isCreating}
 				onClick={toggleIsCreationg}
 				lint='Criar Lista'>
-				{!isCreating? <MdAdd /> : <MdClose />}
+				{!isCreating ? <MdAdd /> : <MdClose />}
 			</CircularButton>
 		</Container>
 	);

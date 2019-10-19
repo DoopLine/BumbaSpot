@@ -1,13 +1,13 @@
 import uuid from 'uuid/v4';
 import { cardActionTypes } from './actionTypes';
-const CardModel = content => ({
+const CardModel = (content) => ({
 	id: uuid(),
 	content,
 	desc: '',
 	labels: [],
 	tasks: [],
 	img: '',
-});
+}); 
 
 const TaskModel = content => ({
 	id: uuid(),
@@ -21,23 +21,24 @@ const LabelModel = (title, color) => ({
 	color,
 });
 
+const updateLists = (lists, currId, newCards) => {
+	return lists.map(_l => (_l.id === currId ? { ..._l, cards: newCards } : _l));
+};
+
 export default (lists, action) => {
 	let cards;
-	let listRef;
 	try {
-		listRef = lists.find(l => l.id === action.listId);
-		cards = [...listRef.cards];
-	} catch (e) {
-		console.log('error');
+		cards = lists.find(_l => _l.id === action.listId).cards;
+	} catch (error) {
+		console.err('erro ao encontrar os cards', error);
 		return lists;
 	}
+
 	switch (action.type) {
 		case cardActionTypes.CREATE_CARD: {
-			return lists.map(l =>
-				l.id === action.listId
-					? { ...l, cards: [...cards, CardModel(action.content)] }
-					: l
-			);
+			const {content, listId} = action;
+			const newCards =  [...cards, CardModel(content)];
+			return updateLists(lists, listId, newCards);
 		}
 
 		case cardActionTypes.EDIT_CARD: {
@@ -49,17 +50,12 @@ export default (lists, action) => {
 				return c;
 			});
 
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.REMOVE_CARD: {
 			const newCards = cards.filter(c => c.id !== action.id);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.CREATE_LABEL: {
@@ -71,10 +67,7 @@ export default (lists, action) => {
 					  }
 					: c
 			);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.REMOVE_LABEL: {
@@ -83,9 +76,7 @@ export default (lists, action) => {
 					? { ...c, labels: c.labels.filter(lb => lb.id !== action.labelId) }
 					: c
 			);
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.CREATE_TASK: {
@@ -94,10 +85,7 @@ export default (lists, action) => {
 					? { ...c, tasks: [...c.tasks, TaskModel(action.content)] }
 					: c
 			);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.REMOVE_TASK: {
@@ -106,10 +94,7 @@ export default (lists, action) => {
 					? { ...c, tasks: c.tasks.filter(ts => ts.id !== action.taskId) }
 					: c
 			);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.CHANGE_TASK_STATE: {
@@ -123,10 +108,7 @@ export default (lists, action) => {
 					  }
 					: c
 			);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.MARK_ALL_TASKS_AS: {
@@ -138,10 +120,7 @@ export default (lists, action) => {
 					  }
 					: c
 			);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		case cardActionTypes.REMOVE_COMPLETE_TASKS: {
@@ -150,14 +129,10 @@ export default (lists, action) => {
 					? { ...c, tasks: c.tasks.filter(ts => ts.isDone !== true) }
 					: c
 			);
-
-			return lists.map(l =>
-				l.id === action.listId ? { ...l, cards: newCards } : l
-			);
+			return updateLists(lists, action.listId, newCards);
 		}
 
 		default: {
-			console.log('error');
 			return lists;
 		}
 	}

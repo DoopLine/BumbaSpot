@@ -1,6 +1,6 @@
 import React, {useRef, useContext} from 'react';
 import { useHistory } from 'react-router-dom';
-import { actionTypes as listActionTypes} from '../../reducers/listReducer';
+import { listActionTypes} from '../../reducers/actionTypes';
 import { useDrag, useDrop } from 'react-dnd';
 import { Container, Label } from './styled';
 import uuid from 'uuid/v4';
@@ -14,8 +14,8 @@ export default function List({data, index, listIndex}){
 
     const { dispatch} = useContext(ListContext);
 
-    const openCard = (listIndex, id) => {
-		history.push(`/board/${id}/${listIndex}`,);
+    const openCard = (id, listIndex) => {
+		history.push(`/lists/${listIndex}/cards/${id}`);
 	};
 
     const [{isDragging}, dragRef] = useDrag({
@@ -62,7 +62,7 @@ export default function List({data, index, listIndex}){
     dragRef(dropRef(dndRef));
 
     return (
-        <Container ref={dndRef} isDragging={isDragging} onClick={()=> openCard(listIndex, id)}>
+        <Container ref={dndRef} isDragging={isDragging} onClick={()=> openCard(id, listIndex)}>
             <header>
                 {labels.map(({title, color}) => (
                     <Label key={uuid()} color={color} title={title}/>

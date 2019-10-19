@@ -1,41 +1,40 @@
 import uuid from 'uuid/v4';
 import cardReducer from './cardReducer';
-const ListModel = (title, createble) => ({
+import { listActionTypes } from './actionTypes';
+const ListModel = (title, createble, boardId) => ({
 	id: uuid(),
+	boardId,
 	title,
-	createble,
 	cards: [],
+	createble,
 	isDone: false,
 });
 
-export const actionTypes = {
-	CREATE: 'CREATE',
-	EDIT: 'EDIT',
-	REMOVE: 'REMOVE',
-	MOVE_CARD: 'MOVE_CARD',
-	MOVE_CARD_TO_CARD: 'MOVE_CARD_TO_CARD',
-};
+// const updateBoards = (boards, currId, newLists) => {
+// 	return boards.map(b => (b.id === currId ? { ...b, lists: newLists } : b));
+// };
 
 export default (lists, action) => {
 	switch (action.type) {
-		case actionTypes.CREATE: {
-			return [...lists, ListModel(action.title, action.createble)];
+		case listActionTypes.CREATE_LIST: {
+			const {title, createble, boardId} = action;
+			return [...lists, ListModel(title, createble, boardId)];
 		}
 
-		case actionTypes.EDIT: {
+		case listActionTypes.EDIT_LIST: {
 			const { newTitle, newCreateble } = action;
 			return lists.map(l =>
-				l.id === action.id
+				l.id === action.listId
 					? { ...l, title: newTitle, createble: newCreateble }
 					: l
 			);
 		}
 
-		case actionTypes.REMOVE: {
-			return lists.filter(l => l.id !== action.id);
+		case listActionTypes.REMOVE_LIST: {
+			return lists.filter(l => l.id !== action.listId);
 		}
 
-		case actionTypes.MOVE_CARD_TO_CARD: {
+		case listActionTypes.MOVE_CARD_TO_CARD: {
 			const workingLists = [...lists];
 			const workingFromList = workingLists[action.fromListIndex];
 			const workingToList = workingLists[action.toListIndex];
@@ -45,7 +44,7 @@ export default (lists, action) => {
 			return workingLists;
 		}
 
-		case actionTypes.MOVE_CARD: {
+		case listActionTypes.MOVE_CARD: {
 			// debugger;
 			const workingLists = [...lists];
 			const workingFromList = workingLists[action.fromListIndex];
@@ -55,10 +54,9 @@ export default (lists, action) => {
 			workingToList.cards.push(dragged);
 			return workingLists;
 		}
+
 		default: {
-			const ls = cardReducer(lists, action);
-			return ls;
-	
+			return cardReducer(lists, action);
 		}
 	}
 };

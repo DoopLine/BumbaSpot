@@ -10,7 +10,7 @@ export const Container = styled.div`
 `;
 
 export const EmptyList = styled.div`
-	background: url('./static/svg/list.svg');
+	background: url(${({imgSrc}) => imgSrc});
 	background-size: 30rem;
 	background-repeat: no-repeat;
 	background-position: center 25%;
