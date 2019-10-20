@@ -16,6 +16,7 @@ import { BoardContext } from '../../context/boardContext';
 function Boards() {
 	const history = useHistory();
 
+
 	const { boards, dispatch } = useContext(BoardContext);
 
 	const [currBoard, setCurrBoard] = useState(undefined);

@@ -33,9 +33,17 @@ export const Container = styled.div`
 			p {
 				display: none;
 			}
-			img {
+			img,svg {
 				margin-right: 0 !important;
 			}
+		}
+
+		svg {
+			width: 3rem;
+			height: 3rem;
+			background-color: #004d40;
+			border-radius: 50%;
+			margin-right: 1rem;
 		}
 
 		img {

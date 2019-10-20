@@ -61,10 +61,6 @@ function Board() {
 				/>
 			)}
 
-			{/* <Switch>
-				
-			</Switch> */}
-
 			<CircularButton
 				float={true}
 				purse={!listHasLength && !isCreating}

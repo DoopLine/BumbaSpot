@@ -9,9 +9,10 @@ export default function Button({
 	lint = '',
 	small = false,
 	type = 'text',
+	secondary= false
 }) {
 	return (
-		<Container onClick={onClick} purse={purse} title={lint} small={small} type={type}>
+		<Container onClick={onClick} purse={purse} title={lint} small={small} type={type} secondary={secondary}>
 			{children}
 		</Container>
 	);

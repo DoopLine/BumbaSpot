@@ -17,6 +17,17 @@ export const boardActionTypes = {
 	REMOVE_BOARD: 'REMOVE_BOARD',
 };
 
+export const userActionTypes = {
+	CREATE_USER: 'CREATE_USER',
+	EDIT_USER: 'EDIT_USER',
+	REMOVE_USER: 'REMOVE_USER',
+};
+
+export const sectionActionTypes = {
+	CREATE_SESSION: 'CREATE_SESSION',
+	DELETE_SESSION: 'DELETE_SESSION',
+};
+
 
 export const listActionTypes = {
 	CREATE_LIST: 'CREATE_LIST',

@@ -7,15 +7,15 @@ import uuid from 'uuid/v4';
 
 import {ListContext} from '../../context/listContext';
 
-export default function List({data, index, listIndex}){
+export default function List({data, index, listIndex, listId}){
     const {labels, content, img, id} = data;
     const dndRef = useRef();
     const history = useHistory();
 
     const { dispatch} = useContext(ListContext);
 
-    const openCard = (id, listIndex) => {
-		history.push(`/lists/${listIndex}/cards/${id}`);
+    const openCard = (id, listId) => {
+		history.push(`/lists/${listId}/cards/${id}`);
 	};
 
     const [{isDragging}, dragRef] = useDrag({
@@ -62,7 +62,7 @@ export default function List({data, index, listIndex}){
     dragRef(dropRef(dndRef));
 
     return (
-        <Container ref={dndRef} isDragging={isDragging} onClick={()=> openCard(id, listIndex)}>
+        <Container ref={dndRef} isDragging={isDragging} onClick={()=> openCard(id, listId)}>
             <header>
                 {labels.map(({title, color}) => (
                     <Label key={uuid()} color={color} title={title}/>

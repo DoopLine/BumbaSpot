@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 import { BoardProvider } from './context/boardContext';
 import { ListProvider } from './context/listContext';
+
+import { SessionContext } from './context/sessionContext';
 
 // Components
 import Header from './components/Header';
@@ -14,11 +16,14 @@ import Board from './components/Board';
 import NavSide from './components/NavSide';
 import ErrorPage from './components/404';
 import CardInfoSide from './components/CardInfoSide';
+import SignUp from './components/SignUp';
 
 // Styled
 import GlobalStyled from './styles/globalStyled';
 
 function App() {
+	const { session } = useContext(SessionContext);
+
 	return (
 		<DndProvider backend={HTML5Backend}>
 			<NavSide />
@@ -31,17 +36,25 @@ function App() {
 								<Home />
 							</Route>
 
-							<Route exact path='/boards'>
-								<Boards />
+							<Route exact path='/signup'>
+								<SignUp />
 							</Route>
 
-							<Route path='/boards/:boardId'>
-								<Board />
-							</Route>
+							{session.sessionId && (
+								<>
+									<Route exact path='/boards'>
+										<Boards />
+									</Route>
 
-							<Route exact path='/lists/:listIndex/cards/:cardId'>
-								<CardInfoSide />
-							</Route>
+									<Route path='/boards/:boardId'>
+										<Board />
+									</Route>
+
+									<Route exact path='/lists/:listId/cards/:cardId'>
+										<CardInfoSide />
+									</Route>
+								</>
+							)}
 
 							<Route>
 								<ErrorPage />

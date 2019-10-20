@@ -97,7 +97,7 @@ export default function List({ data, index }) {
 					/>
 				)}
 				{cards.map((card, i) => (
-					<Card key={card.id} index={i} listIndex={index} data={card} />
+					<Card key={card.id} index={i} listIndex={index} listId={id} data={card} />
 				))}
 				{!cards.length && !isAdding && <NoCard>Sem nenhum card</NoCard>}
 				{isAdding && (

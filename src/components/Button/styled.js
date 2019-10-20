@@ -38,6 +38,7 @@ export const Container = styled.button`
 		css`
 			color: #009688;
 			background-color: transparent;
-			border: .5rem solid #009688;
+			border-bottom: .13rem solid #009688;
+			box-shadow: none;
 		`}
 `;

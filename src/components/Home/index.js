@@ -10,7 +10,7 @@ export default function Home () {
             <InfoSection imgSrc={require('../../assets/svg/organizing_projects.svg')} column={true}>
                 <h1>Seja Bemvindo ao <strong style={{color: '#009688'}}>BumbaSpot</strong></h1>
                 <div>
-                    <Button purse={true}>Começar</Button>
+                    <Button purse={true} onClick={()=> history.push('/signup')}>Começar</Button>
                     <Button secondary={true} onClick={()=> history.push('/boards')}>Meus Boards</Button>
                 </div>
             </InfoSection>

@@ -30,7 +30,7 @@ export default (lists, action) => {
 	try {
 		cards = lists.find(_l => _l.id === action.listId).cards;
 	} catch (error) {
-		console.err('erro ao encontrar os cards', error);
+		console.error('erro ao encontrar os cards', error);
 		return lists;
 	}
 

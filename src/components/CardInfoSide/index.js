@@ -9,8 +9,8 @@ import { ListContext } from '../../context/listContext';
 import {
 	Container,
 	LabelSection,
-	DescriptionSection, 
-	TaskSection, 
+	DescriptionSection,
+	TaskSection,
 	Progress,
 	TaskItem,
 	Header,
@@ -28,15 +28,14 @@ import Options from '../Options';
 
 function CardInfoSide() {
 	const history = useHistory();
-	const { cardId, listIndex } = useParams();
+	const { cardId, listId } = useParams();
 
 	const { lists, dispatch } = useContext(ListContext);
-	const listId = lists[listIndex].id;
-	const currCard = lists[listIndex].cards.find(c => c.id === cardId);
-	console.log(currCard);
-	
 
-	if (currCard === undefined) history.replace('/*');
+	const list = lists.find(_l => _l.id === listId);
+	const currCard = list.cards.find(c => c.id === cardId);
+
+	// if (currCard === undefined) history.replace('/*');
 
 	const [isEditingName, toggleIsEditingName] = useToggle();
 	const [isEditingDesc, toggleIsEditingDesc] = useToggle();
@@ -47,7 +46,9 @@ function CardInfoSide() {
 		if (cur.isDone) acc++;
 		return acc;
 	}, 0);
-	const taskProgress = Math.round((doneTasksCount / currCard.tasks.length) * 100);
+	const taskProgress = Math.round(
+		(doneTasksCount / currCard.tasks.length) * 100
+	);
 
 	const taskOptions = [
 		{
@@ -56,7 +57,7 @@ function CardInfoSide() {
 					type: cardActionTypes.MARK_ALL_TASKS_AS,
 					cardId: currCard.id,
 					state: true,
-					listId
+					listId,
 				});
 			},
 			name: 'Marcar Todas Como Feitas',
@@ -67,7 +68,7 @@ function CardInfoSide() {
 					type: cardActionTypes.MARK_ALL_TASKS_AS,
 					cardId: currCard.id,
 					state: false,
-					listId
+					listId,
 				});
 			},
 			name: 'Desmarcar Todas Como Feitas',
@@ -77,7 +78,7 @@ function CardInfoSide() {
 				dispatch({
 					type: cardActionTypes.REMOVE_COMPLETE_TASKS,
 					cardId: currCard.id,
-					listId
+					listId,
 				});
 			},
 			name: 'Remover Todas as Feitas',
@@ -90,7 +91,7 @@ function CardInfoSide() {
 			type: cardActionTypes.EDIT_CARD,
 			[keyName]: inputVal,
 			cardId: currCard.id,
-			listId
+			listId,
 		});
 		toggleIsEditingName(false);
 		toggleIsEditingDesc(false);
@@ -103,7 +104,7 @@ function CardInfoSide() {
 				title: inputVal,
 				id: currCard.id,
 				color,
-				listId
+				listId,
 			});
 			toggleHasLabelForm(false);
 		}
@@ -116,7 +117,7 @@ function CardInfoSide() {
 			type: cardActionTypes.REMOVE_LABEL,
 			cardId: currCard.id,
 			labelId: id,
-			listId
+			listId,
 		});
 	};
 
@@ -131,7 +132,7 @@ function CardInfoSide() {
 							onClick={toggleIsEditingName}
 							lint='Editar titulo do card'
 							small={true}>
-							<MdEdit />
+							{isEditingName ? <MdClose /> : <MdEdit />}
 						</CircularButton>
 					</Header>
 					<p>{'Lorem Ipsum Dolor'}</p>
@@ -177,7 +178,7 @@ function CardInfoSide() {
 								onClick={toggleIsEditingDesc}
 								lint='Editar descricão do card'
 								small={true}>
-								<MdEdit />
+								{!isEditingDesc ? <MdEdit /> : <MdClose />}
 							</CircularButton>
 						</Header>
 						<p>{currCard.desc || 'Sem Descrição'}</p>
@@ -197,7 +198,7 @@ function CardInfoSide() {
 								onClick={toggleIsEditingTask}
 								lint='Adicionar Tarefa'
 								small={true}>
-								<MdAdd />
+								{!isEditingTask ? <MdAdd /> : <MdClose />}
 							</CircularButton>
 							{<div style={{ margin: '0 .5rem' }}></div>}
 							<Options options={taskOptions} small={true} />
@@ -213,6 +214,7 @@ function CardInfoSide() {
 										type: cardActionTypes.CREATE_TASK,
 										content: inputVal,
 										id: currCard.id,
+										listId
 									});
 									toggleIsEditingTask();
 								}}
@@ -232,6 +234,7 @@ function CardInfoSide() {
 												cardId: currCard.id,
 												taskId: id,
 												state: !isDone,
+												listId
 											});
 										}}
 										key={id}
