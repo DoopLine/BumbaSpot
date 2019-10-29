@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { MdEdit, MdAdd, MdClose } from 'react-icons/md';
 import useToggle from '../../hooks/useToggle';
-
-import { cardActionTypes } from '../../reducers/actionTypes';
-import { ListContext } from '../../context/listContext';
+import  dispatch from "../../modules/card.actions";
+import  listDispatcher from "../../modules/list.actions";
+import { cardActionTypes, listActionTypes, sessionActionTypes } from '../../modules/actionTypes';
+import { SessionContext } from '../../context/sessionContext';
 
 import {
 	Container,
@@ -15,8 +16,6 @@ import {
 	TaskItem,
 	Header,
 } from './styled';
-
-// import BoardContext from '../Board/context';
 
 import Backdrop from '../Backdrop';
 import CheckBox from '../CheckBox';
@@ -30,9 +29,9 @@ function CardInfoSide() {
 	const history = useHistory();
 	const { cardId, listId } = useParams();
 
-	const { lists, dispatch } = useContext(ListContext);
+	const { session, dispatch: sessionDispatch } = useContext(SessionContext);
 
-	const list = lists.find(_l => _l.id === listId);
+	const list = session.user.lists.find(_l => _l.id === listId);
 	const currCard = list.cards.find(c => c.id === cardId);
 
 	// if (currCard === undefined) history.replace('/*');
@@ -46,79 +45,112 @@ function CardInfoSide() {
 		if (cur.isDone) acc++;
 		return acc;
 	}, 0);
+
 	const taskProgress = Math.round(
 		(doneTasksCount / currCard.tasks.length) * 100
 	);
 
 	const taskOptions = [
 		{
-			handler: () => {
-				dispatch({
-					type: cardActionTypes.MARK_ALL_TASKS_AS,
-					cardId: currCard.id,
-					state: true,
-					listId,
-				});
-			},
+			handler: () => handleMarkAllTasksAs(true),
 			name: 'Marcar Todas Como Feitas',
 		},
 		{
-			handler: () => {
-				dispatch({
-					type: cardActionTypes.MARK_ALL_TASKS_AS,
-					cardId: currCard.id,
-					state: false,
-					listId,
-				});
-			},
+			handler: () => handleMarkAllTasksAs(false),
 			name: 'Desmarcar Todas Como Feitas',
 		},
 		{
-			handler: () => {
-				dispatch({
-					type: cardActionTypes.REMOVE_COMPLETE_TASKS,
-					cardId: currCard.id,
-					listId,
-				});
-			},
+			handler: handleRemoveCompleteTasks,
 			name: 'Remover Todas as Feitas',
 		},
 	];
 
 	// Functions
-	const handleEditCard = (inputVal, keyName) => {
-		dispatch({
-			type: cardActionTypes.EDIT_CARD,
-			[keyName]: inputVal,
-			cardId: currCard.id,
+
+	function updateData(newCards){
+		if (!newCards)
+			return console.log('Algo deu errado ao adicionar um novo card');
+
+		const newLists = listDispatcher({
+			type: listActionTypes.UPDATE_LIST_CARDS,
+			lists: session.user.lists,
+			newCards,
 			listId,
 		});
+
+		if (!newLists)
+			return console.log(
+				'Algo deu errado ao atualizar a lista com novos cards'
+			);
+
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, lists: newLists },
+		});
+	}
+
+	function handleMarkAllTasksAs(state){
+		const newCards = dispatch({
+			type: cardActionTypes.MARK_ALL_TASKS_AS,
+			cardId,
+			state,
+			listId,
+			cards: list.cards
+		});
+
+		updateData(newCards);
+	}
+
+	function handleRemoveCompleteTasks(){
+		const newCards = dispatch({
+			type: cardActionTypes.REMOVE_COMPLETE_TASKS,
+			cardId,
+			listId,
+			cards: list.cards
+		});
+
+		updateData(newCards);
+	}
+
+	const handleEditCard = (inputVal, keyName) => {
+		const newCards = dispatch({
+			type: cardActionTypes.EDIT_CARD,
+			[keyName]: inputVal,
+			cardId,
+			listId,
+			cards: list.cards
+		});
+
+		updateData(newCards);
+
 		toggleIsEditingName(false);
 		toggleIsEditingDesc(false);
 	};
 
 	const handleCreateLabel = (inputVal, color) => {
 		if (inputVal) {
-			dispatch({
+			const newCards = dispatch({
 				type: cardActionTypes.CREATE_LABEL,
 				title: inputVal,
 				id: currCard.id,
 				color,
 				listId,
+				cards: list.cards
 			});
+			updateData(newCards);
 			toggleHasLabelForm(false);
 		}
 	};
 
 	const handleRemovingLabel = id => {
-		console.log(id);
-
-		dispatch({
+		const newCards = dispatch({
 			type: cardActionTypes.REMOVE_LABEL,
 			cardId: currCard.id,
 			labelId: id,
 			listId,
+			cards: list.cards
 		});
+		updateData(newCards);
 	};
 
 	return (
@@ -210,12 +242,14 @@ function CardInfoSide() {
 								keyName='newDesc'
 								info='Descreva a tarefa'
 								onSubmit={inputVal => {
-									dispatch({
+									const newCards = dispatch({
 										type: cardActionTypes.CREATE_TASK,
 										content: inputVal,
 										id: currCard.id,
-										listId
+										listId,
+										cards: list.cards
 									});
+									updateData(newCards);
 									toggleIsEditingTask();
 								}}
 							/>
@@ -229,13 +263,15 @@ function CardInfoSide() {
 								{currCard.tasks.map(({ id, content, isDone }) => (
 									<CheckBox
 										onChange={() => {
-											dispatch({
+											const newCards = dispatch({
 												type: cardActionTypes.CHANGE_TASK_STATE,
 												cardId: currCard.id,
 												taskId: id,
 												state: !isDone,
-												listId
+												listId,
+												cards: list.cards
 											});
+											updateData(newCards);
 										}}
 										key={id}
 										id={id}

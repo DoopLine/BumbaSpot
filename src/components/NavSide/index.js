@@ -1,12 +1,12 @@
 import React from 'react';
-import { MdHome, MdDeveloperBoard, MdInfo, MdFeedback } from 'react-icons/md';
+import { MdHome, MdDashboard, MdInfo, MdFeedback } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 
-import { Container } from './styled';
+import { Container, Image } from './styled';
 export default function NavSide() {
 	return (
 		<Container>
-			<h1>TSP</h1>
+			<Image src={require("../../assets/logo.ico")} alt="BumbaSpot Logo"/>
 			<ul>
 				<li>
 					<NavLink exact to='/' title='Início'>
@@ -15,7 +15,7 @@ export default function NavSide() {
 				</li>
 				<li>
 					<NavLink to='/boards' activeClassName="active" title='Boards'>
-						<MdDeveloperBoard />
+						<MdDashboard />
 					</NavLink>
 				</li>
 				<li>

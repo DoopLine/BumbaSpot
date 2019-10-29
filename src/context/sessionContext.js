@@ -7,7 +7,7 @@ export const SessionContext = createContext();
 export function SessionProvider(props) {
 	const [session, dispatch] = useLocalStorageReducer(
 		sessionReducer,
-		{},
+		{ sessionId: null, user: null},
 		'session'
 	);
 

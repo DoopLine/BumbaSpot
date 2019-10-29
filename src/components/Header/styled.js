@@ -15,7 +15,7 @@ export const Container = styled.div`
 		font-size: 1rem;
 	}
 
-	span {
+	button {
 		display: flex;
 		align-items: center;
 		background-color: #00695c;
@@ -24,29 +24,38 @@ export const Container = styled.div`
 		padding-right: 1rem;
 		cursor: pointer;
 		transition: 0.2s;
+		border: none;
+		outline: none;
 
-		&:hover {
-			color: #fff;
-		}
 		@media only screen and (max-width: 500px) {
 			padding-right: 0;
-			p {
+			> p {
 				display: none;
 			}
-			img,svg {
+			> img,
+			svg {
 				margin-right: 0 !important;
 			}
 		}
 
-		svg {
+		> p {
+			&:hover {
+				color: #fff;
+			}
+		}
+
+		> svg {
 			width: 3rem;
 			height: 3rem;
 			background-color: #004d40;
 			border-radius: 50%;
 			margin-right: 1rem;
+			&:hover {
+				color: #fff;
+			}
 		}
 
-		img {
+		> img {
 			height: 3rem;
 			width: 3rem;
 			border-radius: 50%;

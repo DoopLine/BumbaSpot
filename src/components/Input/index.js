@@ -9,6 +9,7 @@ export default function Input({
 	onChange,
 	value= '',
 	hasError = false,
+	type = 'text'
 }) {
     const id = uuid();
 	return (
@@ -17,7 +18,7 @@ export default function Input({
 			{multiline ? (
 				<textarea id={id} value={value} onChange={onChange}/>
 			) : (
-				<input type='text' value={value}  id={id} onChange={onChange}/>
+				<input type={type} value={value}  id={id} onChange={onChange}/>
 			)}
 		</Container>
 	);

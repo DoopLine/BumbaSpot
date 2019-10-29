@@ -1,6 +1,6 @@
 import uuid from 'uuid/v4';
-import cardReducer from './cardReducer';
-import { listActionTypes } from './actionTypes';
+import { listActionTypes } from '../modules/actionTypes';
+
 const ListModel = (title, createble, boardId) => ({
 	id: uuid(),
 	boardId,
@@ -10,14 +10,12 @@ const ListModel = (title, createble, boardId) => ({
 	isDone: false,
 });
 
-// const updateBoards = (boards, currId, newLists) => {
-// 	return boards.map(b => (b.id === currId ? { ...b, lists: newLists } : b));
-// };
+export default action => {
+	const { lists } = action;
 
-export default (lists, action) => {
 	switch (action.type) {
 		case listActionTypes.CREATE_LIST: {
-			const {title, createble, boardId} = action;
+			const { title, createble, boardId } = action;
 			return [...lists, ListModel(title, createble, boardId)];
 		}
 
@@ -27,6 +25,12 @@ export default (lists, action) => {
 				l.id === action.listId
 					? { ...l, title: newTitle, createble: newCreateble }
 					: l
+			);
+		}
+
+		case listActionTypes.UPDATE_LIST_CARDS: {
+			return lists.map(l =>
+				l.id === action.listId ? { ...l, cards: action.newCards } : l
 			);
 		}
 
@@ -56,7 +60,8 @@ export default (lists, action) => {
 		}
 
 		default: {
-			return cardReducer(lists, action);
+			// return updateUsers(users, userId, cardReducer(lists, action));
+			return undefined;
 		}
 	}
 };

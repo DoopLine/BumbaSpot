@@ -1,34 +1,30 @@
 import uuid from 'uuid/v4';
-import { userActionTypes } from './actionTypes';
-// import listReducer from './listReducer';
+import { userActionTypes } from '../modules/actionTypes';
+import { saveUser, deleteUser } from '../modules/storage';
 
 const UserModel = (name, password) => ({
 	id: uuid(),
 	name,
 	password,
+	boards: [],
+	lists: [],
 });
 
-export default (users, action) => {
+export default (action) => {
 	switch (action.type) {
 		case userActionTypes.CREATE_USER: {
 			const {name, password} = action;
-			console.log('criando user');
-			return [...users, UserModel(name, password)];
+			saveUser(UserModel(name, password));
+			return;
 		}
 
-		// case userActionTypes.EDIT_USER: {
-		// 	const { newTitle } = action;
-		// 	return users.map(b =>
-		// 		b.id === action.userId ...b, title: newTitle } : b
-		// 	);
-		// }
-
 		case userActionTypes.REMOVE_USER: {
-			return users.filter(_u => _u.id !== action.userId);
+			deleteUser(action.userId);
+			return;
 		}
 
 		default: {
-			return users;
+			console.log('caio no default do users');
 		}
 	}
 };

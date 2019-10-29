@@ -1,51 +1,83 @@
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { MdTimer } from 'react-icons/md';
-
+import dispatch from '../../modules/board.actions';
 import useToggle from '../../hooks/useToggle';
 
-import { Container, BoardGrid, BoardCard, BoardHeader } from './styled';
+import { Container, BoardCard } from './styled';
 
-import BoardForm from '../BoardForm';
-import Button from '../Button';
 import BoardContentSection from './BoardContentSection';
+import BoardHeader from './BoardHeader';
 
-import { boardActionTypes } from '../../reducers/actionTypes';
-import { BoardContext } from '../../context/boardContext';
+import {
+	boardActionTypes,
+	sessionActionTypes,
+} from '../../modules/actionTypes';
+
+import { SessionContext } from '../../context/sessionContext';
 
 function Boards() {
 	const history = useHistory();
 
+	const { session, dispatch: sessionDispatch } = useContext(SessionContext);
 
-	const { boards, dispatch } = useContext(BoardContext);
+	const boards = session.user.boards;
+
+	const userId = session.user.id;
 
 	const [currBoard, setCurrBoard] = useState(undefined);
 
 	//Visibility vars
 	const [creating, toggleCreating] = useToggle();
-	const [showBoards, toggleShowBoards] = useToggle();
 
 	//Handlers
 	const handleCreateBoard = title => {
-		dispatch({ type: boardActionTypes.CREATE_BOARD, title });
+		const newBoards = dispatch({
+			type: boardActionTypes.CREATE_BOARD,
+			title,
+			boards,
+			owner: session.user.name,
+		});
+
+		if (!newBoards) return console.log('Algo correu errado ao criar o board');
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, boards: newBoards },
+		});
 		toggleCreating();
 	};
 
 	const handleEditBoard = newTitle => {
 		const boardId = currBoard.id;
-		dispatch({
+		const newBoards = dispatch({
 			type: boardActionTypes.EDIT_BOARD,
 			newTitle,
 			boardId,
+			boards,
+			userId,
+		});
+
+		if (!newBoards) return console.log('Algo correu errado ao editar o board');
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, boards: newBoards },
 		});
 		setCurrBoard(undefined);
 	};
 
 	const handleRemoveBoard = () => {
 		const boardId = currBoard.id;
-		dispatch({
+		const newBoards = dispatch({
 			type: boardActionTypes.REMOVE_BOARD,
 			boardId,
+			boards,
+			userId,
+		});
+
+		if (!newBoards) return console.log('Algo correu errado ao deletar o board');
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, boards: newBoards },
 		});
 		setCurrBoard(undefined);
 	};
@@ -66,28 +98,13 @@ function Boards() {
 
 	return (
 		<Container>
-			<BoardHeader id="boardHeader">
-				<p>
-					''Aqui estão os <strong>Boards</strong> que representam os seus
-					projectos que estão a ser gerenciados aqui no{' '}
-					<strong>BumbaSpot.</strong>''
-				</p>
-				<div>
-					{creating && <BoardForm onSubmit={handleCreateBoard} />}
-					<Button title='criar board' onClick={toggleCreating}>
-						{creating ? 'Cancelar' : 'Criar Board'}
-					</Button>
-					<Button title='criar board' onClick={toggleShowBoards}>
-						{showBoards ? 'Ocultar Boards' : 'Mostrar Boards'}
-					</Button>
-				</div>
-				{showBoards && (
-					<BoardGrid>
-						{displayBoard()}
-						{!boards.length && <h1>Nenhum board foi criado</h1>}
-					</BoardGrid>
-				)}
-			</BoardHeader>
+			<BoardHeader
+				boardsLength={boards.length}
+				creating={creating}
+				displayBoard={displayBoard}
+				handleCreateBoard={handleCreateBoard}
+				toggleCreating={toggleCreating}
+			/>
 			{currBoard && (
 				<BoardContentSection
 					history={history}

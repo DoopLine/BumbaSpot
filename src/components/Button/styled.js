@@ -2,25 +2,44 @@ import styled, { css } from 'styled-components';
 import { purseAnimation } from '../../styles/animations';
 
 export const Container = styled.button`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 1.2rem;
-	width: fit-content;
-	height: fit-content;
-	color: #fff;
-	padding: .5rem 1rem;
-	border-radius: .5px;
-	background-color: #009688;
-	border: 0;
-	cursor: pointer;
-	box-shadow: 0 0 0.2rem #004d40;
-	transition: 0.2s;
+
+  user-select: none;
+  appearance: none;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: none;
+  display: inline-flex;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: .5em 1em;
+  position: relative;
+  vertical-align: top;
+  margin: 0;
+  background-color: #009688;
+  color: #fff;
+  cursor: pointer;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+
+  &:focus, &:active{
 	outline: none;
-	&:hover,
-	&:focus {
-		box-shadow: 0 0 0.5rem #004d40;
-	}
+  }
+
+  &:hover{
+	  box-shadow: 0 0 0.3rem #004d40;
+  }
+
+  &:focus{
+	box-shadow: 0 0 0.5rem #004d40;
+  }
+
+  &:disabled{
+	cursor: not-allowed;
+	box-shadow: none;
+    opacity: .5;
+  }
 
 	${({ purse }) =>
 		purse &&
@@ -38,7 +57,7 @@ export const Container = styled.button`
 		css`
 			color: #009688;
 			background-color: transparent;
-			border-bottom: .13rem solid #009688;
+			border-bottom: 0.13rem solid #009688;
 			box-shadow: none;
 		`}
 `;

@@ -23,16 +23,17 @@ export const userActionTypes = {
 	REMOVE_USER: 'REMOVE_USER',
 };
 
-export const sectionActionTypes = {
+export const sessionActionTypes = {
 	CREATE_SESSION: 'CREATE_SESSION',
 	DELETE_SESSION: 'DELETE_SESSION',
+	UPDATE_CURRENT_USER_SESSION: 'UPDATE_CURRENT_USER_SESSION',
 };
-
 
 export const listActionTypes = {
 	CREATE_LIST: 'CREATE_LIST',
 	EDIT_LIST: 'EDIT_LIST',
 	REMOVE_LIST: 'REMOVE_LIST',
+	UPDATE_LIST_CARDS: 'UPDATE_LIST_CARDS',
 	MOVE_CARD: 'MOVE_CARD',
 	MOVE_CARD_TO_CARD: 'MOVE_CARD_TO_CARD',
 };

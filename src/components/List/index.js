@@ -1,11 +1,16 @@
 import React, { useContext } from 'react';
-import { cardActionTypes, listActionTypes } from '../../reducers/actionTypes';
+import {
+	cardActionTypes,
+	listActionTypes,
+	sessionActionTypes,
+} from '../../modules/actionTypes';
 import useToggle from '../../hooks/useToggle';
-
+import dispatch from '../../modules/card.actions';
+import listDispatcher from '../../modules/list.actions';
 import { useDrop } from 'react-dnd';
 import { MdAdd, MdClose } from 'react-icons/md';
 
-import { ListContext } from '../../context/listContext';
+import { SessionContext } from '../../context/sessionContext';
 
 import { Container, NoCard } from './styled';
 
@@ -18,7 +23,7 @@ import Options from '../Options';
 export default function List({ data, index }) {
 	const { title, createble, isDone, id, cards } = data;
 
-	const { dispatch } = useContext(ListContext);
+	const { session, dispatch: sessionDispatch } = useContext(SessionContext);
 
 	const [isAdding, toggleIsAdding] = useToggle();
 	const [isEditing, toggleIsEditing] = useToggle();
@@ -26,28 +31,76 @@ export default function List({ data, index }) {
 	const listOptions = [
 		{ handler: toggleIsEditing, name: 'Editar' },
 		{
-			handler: () =>
-				dispatch({ type: listActionTypes.REMOVE_LIST, listId: id }),
+			handler: handleRemoveList
+				,
 			name: 'Apagar',
 		},
 	];
 
+	function handleRemoveList() {
+		const newLists = listDispatcher({
+			type: listActionTypes.REMOVE_LIST,
+			listId: id,
+			lists: session.user.lists,
+		});
+
+		if(!newLists) return console.log('Algo deu errado ao atualizar a lista com novos cards');
+
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, lists: newLists },
+		});
+	}
+
 	const handleAddNewCard = inputVal => {
-		dispatch({
+		const newCards = dispatch({
 			type: cardActionTypes.CREATE_CARD,
 			content: inputVal,
+			cards,
+		});
+
+		if (!newCards)
+			return console.log('Algo deu errado ao adicionar um novo card');
+
+		const newLists = listDispatcher({
+			type: listActionTypes.UPDATE_LIST_CARDS,
+			lists: session.user.lists,
+			newCards,
 			listId: id,
 		});
+
+		if (!newLists)
+			return console.log(
+				'Algo deu errado ao atualizar a lista com novos cards'
+			);
+
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, lists: newLists },
+		});
+
 		toggleIsAdding(false);
 	};
 
 	const handleUpdateList = (newTitle, newCreateble) => {
-		dispatch({
+		const newLists = listDispatcher({
 			type: listActionTypes.EDIT_LIST,
 			newTitle,
 			newCreateble,
 			listId: id,
+			lists: session.user.lists,
 		});
+
+		if (!newLists)
+			return console.log(
+				'Algo deu errado ao atualizar a lista com novos cards'
+			);
+
+		sessionDispatch({
+			type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+			user: { ...session.user, lists: newLists },
+		});
+
 		toggleIsEditing(false);
 	};
 
@@ -60,12 +113,24 @@ export default function List({ data, index }) {
 			const draggedIndex = item.index;
 
 			if (draggedListIndex === targetListIndex) return;
-			dispatch({
+			const newLists = listDispatcher({
 				type: listActionTypes.MOVE_CARD,
 				fromListIndex: draggedListIndex,
 				fromIndex: draggedIndex,
 				toListIndex: targetListIndex,
+				lists: session.user.lists,
 			});
+
+			if (!newLists)
+				return console.log(
+					'Algo deu errado ao atualizar a lista com novos cards'
+				);
+
+			sessionDispatch({
+				type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+				user: { ...session.user, lists: newLists },
+			});
+
 			item.listIndex = targetListIndex;
 		},
 	});
@@ -97,7 +162,13 @@ export default function List({ data, index }) {
 					/>
 				)}
 				{cards.map((card, i) => (
-					<Card key={card.id} index={i} listIndex={index} listId={id} data={card} />
+					<Card
+						key={card.id}
+						index={i}
+						listIndex={index}
+						listId={id}
+						data={card}
+					/>
 				))}
 				{!cards.length && !isAdding && <NoCard>Sem nenhum card</NoCard>}
 				{isAdding && (

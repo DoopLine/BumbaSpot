@@ -31,7 +31,6 @@ export const Container = styled.section`
 			& > div {
 				padding: 1rem;
 			}
-
 		}
 
 		span {

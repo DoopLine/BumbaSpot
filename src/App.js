@@ -3,9 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
-import { BoardProvider } from './context/boardContext';
-import { ListProvider } from './context/listContext';
-
 import { SessionContext } from './context/sessionContext';
 
 // Components
@@ -17,6 +14,7 @@ import NavSide from './components/NavSide';
 import ErrorPage from './components/404';
 import CardInfoSide from './components/CardInfoSide';
 import SignUp from './components/SignUp';
+import LogIn from './components/LogIn';
 
 // Styled
 import GlobalStyled from './styles/globalStyled';
@@ -27,42 +25,34 @@ function App() {
 	return (
 		<DndProvider backend={HTML5Backend}>
 			<NavSide />
-			<BoardProvider>
-				<ListProvider>
-					<div className='wrapper'>
-						<Header />
-						<Switch>
-							<Route exact path='/'>
-								<Home />
+			<div className='wrapper'>
+				<Header />
+				<Switch>
+					<Route exact path='/' component={Home} />
+
+					<Route path='/login' component={LogIn}/>
+
+					<Route path='/signup' component={SignUp}/>
+
+					{session.sessionId && (
+						<>
+							<Route exact path='/boards' component={Boards}/>
+
+							<Route path='/boards/:boardId'>
+								<Board />
 							</Route>
 
-							<Route exact path='/signup'>
-								<SignUp />
+							<Route exact path='/lists/:listId/cards/:cardId'>
+								<CardInfoSide />
 							</Route>
+						</>
+					)}
 
-							{session.sessionId && (
-								<>
-									<Route exact path='/boards'>
-										<Boards />
-									</Route>
-
-									<Route path='/boards/:boardId'>
-										<Board />
-									</Route>
-
-									<Route exact path='/lists/:listId/cards/:cardId'>
-										<CardInfoSide />
-									</Route>
-								</>
-							)}
-
-							<Route>
-								<ErrorPage />
-							</Route>
-						</Switch>
-					</div>
-				</ListProvider>
-			</BoardProvider>
+					<Route >
+						<ErrorPage />
+					</Route>
+				</Switch>
+			</div>
 			<GlobalStyled />
 		</DndProvider>
 	);

@@ -13,7 +13,6 @@ export default ({
     let timeout;
     
 	if (autoClose) {
-        console.log('init');
 		timeout = setTimeout(() => {
             console.log('timeout');
             onClose();
@@ -21,7 +20,7 @@ export default ({
     }
     
 	useEffect(() => {
-		return clearTimeout(timeout);
+		return ()=> clearTimeout(timeout);
 	});
 
 	return (

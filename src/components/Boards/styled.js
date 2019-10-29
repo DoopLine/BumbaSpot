@@ -7,22 +7,9 @@ export const Container = styled.section`
 	//temporario
 	color: #fff;
 	padding: 2rem;
-`;
 
-export const BoardGrid = styled.article`
-	display: flex;
-	overflow-x: auto;
-	padding: 1rem 0;
-
-	> h1 {
-		color: #00695c;
-		font-size: 2rem;
-		text-align: center;
-		width: 100%;
-	}
-
-	& > *:not(:last-child) {
-		margin-right: 1rem;
+	&>*:first-child{
+		margin-bottom: 2rem;
 	}
 `;
 
@@ -65,34 +52,6 @@ export const BoardCard = styled.div`
 			svg {
 				margin-right: 0.5rem;
 			}
-		}
-	}
-`;
-
-export const BoardHeader = styled.article`
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	margin-bottom: 2rem;
-	/* background-color: #009688; */
-	padding: 1rem;
-	border-radius: 3px;
-	box-shadow: 0 0 5px 0px #00695c38;
-
-	> p {
-		color: #00695c;
-		width: 35rem;
-		font-size: 1.5rem;
-		margin-right: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	> div {
-		display: flex;
-		align-items: baseline;
-		& > *:not(:last-child) {
-			margin-right: 1rem;
 		}
 	}
 `;

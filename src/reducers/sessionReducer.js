@@ -1,23 +1,22 @@
 import uuid from 'uuid/v4';
-import { sectionActionTypes } from './actionTypes';
-// import listReducer from './listReducer';
-
-const sessionModel = (userName) => ({
+import { sessionActionTypes } from '../modules/actionTypes';
+const sessionModel = (user) => ({
 	sessionId: uuid(),
-	userName,
+	user
 });
 
 export default (session, action) => {
 	switch (action.type) {
-		case sectionActionTypes.CREATE_SESSION: {
-            const {userName} = action;
-            console.log('criando sess');
-			return userName ?  sessionModel(userName) : {};
+		case sessionActionTypes.CREATE_SESSION: {
+			return action.user ? sessionModel(action.user) : {sessionId: null, user: null};
 		}
 
-        
-		case sectionActionTypes.DELETE_SESSION: {
-			return {};
+		case sessionActionTypes.DELETE_SESSION: {
+			return { sessionId: null, user: null};
+		}
+
+		case sessionActionTypes.UPDATE_CURRENT_USER_SESSION: {
+			return { ...session, user: action.user};
 		}
 
 		default: {

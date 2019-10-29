@@ -4,7 +4,6 @@ export const Container = styled.article`
 	display: flex;
 	padding: 1rem;
 	border-radius: 3px;
-	box-shadow: 0 0 5px 0px #00695c38;
 	color: #00695c;
 
 	>div {

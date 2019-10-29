@@ -1,18 +1,19 @@
 import uuid from 'uuid/v4';
-import { boardActionTypes } from './actionTypes';
-// import listReducer from './listReducer';
+import { boardActionTypes } from '../modules/actionTypes';
 
-const BoardModel = title => ({
+const BoardModel = (title, owner) => ({
 	id: uuid(),
 	title,
-	owner: 'User Name',
+	owner,
 	group: 0,
 });
 
-export default (boards, action) => {
+export default action => {
+	const { boards } = action;
+
 	switch (action.type) {
 		case boardActionTypes.CREATE_BOARD: {
-			return [...boards, BoardModel(action.title)];
+			return [...boards, BoardModel(action.title, action.owner)];
 		}
 
 		case boardActionTypes.EDIT_BOARD: {
@@ -23,11 +24,11 @@ export default (boards, action) => {
 		}
 
 		case boardActionTypes.REMOVE_BOARD: {
-			return boards.filter(b => b.id !== action.boardId);
+			return boards.filter(b => b.id !== action.boardId)
 		}
 
 		default: {
-			return boards;
+			return undefined;
 		}
 	}
 };

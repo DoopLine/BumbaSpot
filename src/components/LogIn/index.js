@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import dispatch from '../../reducers/userReducer';
 import useFormState from '../../hooks/useFormState';
+import {findUserByName} from '../../modules/storage';
 import { IoLogoFacebook, IoLogoGoogle } from 'react-icons/io';
-import { findUserByName } from '../../modules/storage';
-
 
 import { Container } from './styled';
 import ShadowWrapper from '../ShadowWrapper';
@@ -13,33 +11,33 @@ import Button from '../Button';
 import Notification from '../Notification';
 
 import {
-	userActionTypes,
+	sessionActionTypes,
 } from '../../modules/actionTypes';
+import { SessionContext } from '../../context/sessionContext';
 
-function SignUp() {
+function LogIn() {
 	const history = useHistory();
+	const { dispatch: sessionDispatch } = useContext(SessionContext);
 
 	const [msg, setMsg] = useState('');
 
 	const [userName, changeUserName] = useFormState();
 	const [password, changePassword] = useFormState();
-	const [rePassword, changeRePassword] = useFormState();
 
 	const handleCreateUser = async e => {
 		e.preventDefault();
-
-		if (userName && password && rePassword) {
-			if (password === rePassword) {
-				if (!findUserByName(userName)) {
-					await dispatch({
-						type: userActionTypes.CREATE_USER,
-						password,
-						name: userName,
-					});
-					history.push('/login');
-				} else setMsg('Este nome de usuário já existe! porfavor tente outro.');
-			} else
-				setMsg('Verifique se a palavra passe e a de confirmação são iguais!');
+ 
+		if (userName && password) {
+				const checkUser = findUserByName(userName);
+				if (checkUser) {
+					if(checkUser.password === password){
+						await sessionDispatch({
+							type: sessionActionTypes.CREATE_SESSION,
+							user: checkUser
+						});
+						history.push('/');
+					}else setMsg('Palavra passe incorreta.');
+				} else setMsg('Este nome de usuário não existe!.');
 		} else setMsg('Preencha todos os campos, porfavor.');
 	};
 
@@ -51,7 +49,7 @@ function SignUp() {
 				</Notification>
 			)}
 			<ShadowWrapper>
-				<h1>Registrar-se</h1>
+				<h1>Iniciar Sessão</h1>
 
 				<form onSubmit={handleCreateUser}>
 					<Input
@@ -65,13 +63,7 @@ function SignUp() {
 						value={password}
 						onChange={changePassword}
 					/>
-					<Input
-						title='Repita a palavra passe'
-						type="password"
-						value={rePassword}
-						onChange={changeRePassword}
-					/>
-					<Button>Cadastrar</Button>
+					<Button>Iniciar Sessão</Button>
 				</form>
 				<span>
 					<Button disabled={true}>
@@ -83,13 +75,11 @@ function SignUp() {
 						Com Google
 					</Button>
 					<p>Ou</p>
-					<Button secondary={true} onClick={() => history.push('/login')}>
-						Fazer Login
-					</Button>
+					<Button secondary={true} onClick={()=> history.push('/signup')}>Registrar-se</Button>
 				</span>
 			</ShadowWrapper>
 		</Container>
 	);
 }
 
-export default SignUp;
+export default LogIn;

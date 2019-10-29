@@ -1,5 +1,13 @@
 import styled from 'styled-components';
 
+export const Image = styled.img`
+	height: 5rem;
+	width: 5rem;
+	object-fit: cover;
+	color: inherit;
+	align-self: center;
+	margin-bottom: 1rem;
+`;
 export const Container = styled.nav`
 	background-color: #00695c;
 	flex: 0 0 6rem;
@@ -7,6 +15,7 @@ export const Container = styled.nav`
 	justify-content: space-between;
 	flex-direction: column;
 	padding: 2rem 0;
+	padding-top: 1rem;
 
 	@media only screen and (max-width: 425px) {
 		display: none;
@@ -35,7 +44,7 @@ export const Container = styled.nav`
 				border-left: 2px solid white;
 				background-color: rgba(0, 0, 0, 0.2);
 			}
-			
+
 			a {
 				display: flex;
 				padding: 0.5rem 0;

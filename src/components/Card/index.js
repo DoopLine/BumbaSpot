@@ -1,18 +1,19 @@
 import React, {useRef, useContext} from 'react';
 import { useHistory } from 'react-router-dom';
-import { listActionTypes} from '../../reducers/actionTypes';
 import { useDrag, useDrop } from 'react-dnd';
 import { Container, Label } from './styled';
 import uuid from 'uuid/v4';
-
-import {ListContext} from '../../context/listContext';
+import dispatch from '../../modules/list.actions';
+import { listActionTypes, sessionActionTypes} from '../../modules/actionTypes';
+import {SessionContext} from '../../context/sessionContext';
 
 export default function List({data, index, listIndex, listId}){
     const {labels, content, img, id} = data;
     const dndRef = useRef();
     const history = useHistory();
 
-    const { dispatch} = useContext(ListContext);
+    const {session, dispatch: sessionDispatch} = useContext(SessionContext);
+
 
     const openCard = (id, listId) => {
 		history.push(`/lists/${listId}/cards/${id}`);
@@ -45,13 +46,23 @@ export default function List({data, index, listIndex, listId}){
             if(draggedIndex < targetIndex && draggedTop < targetCenter) return;
             if(draggedIndex > targetIndex && draggedTop > targetCenter) return;
 
-            // move(draggedIndex, targetIndex, draggedListIndex, targetListIndex);
-            dispatch({
+            const newLists = dispatch({
 				type: listActionTypes.MOVE_CARD_TO_CARD,
 				fromListIndex: draggedListIndex,
 				toListIndex: targetListIndex,
 				fromIndex: draggedIndex,
-				toIndex: targetIndex,
+                toIndex: targetIndex,
+                lists: session.user.lists,
+            });
+            
+            if (!newLists)
+				return console.log(
+					'Algo deu errado ao atualizar a mover um card para outra Lista com cards'
+				);
+
+			sessionDispatch({
+				type: sessionActionTypes.UPDATE_CURRENT_USER_SESSION,
+				user: { ...session.user, lists: newLists },
 			});
 
             item.index = targetIndex;
