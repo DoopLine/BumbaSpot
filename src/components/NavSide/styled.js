@@ -18,7 +18,7 @@ export const Container = styled.nav`
 	padding-top: 1rem;
 
 	@media only screen and (max-width: 425px) {
-		display: none;
+		/* display: none; */
 	}
 
 	h1 {

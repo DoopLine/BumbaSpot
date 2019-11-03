@@ -4,10 +4,10 @@ import useTogge from '../../../hooks/useToggle';
 
 import { Container, Header } from './styled';
 
-import Button from '../../Button';
-import CircularButton from '../../CircularButton';
-import BoardForm from '../../BoardForm';
-import ShadowWrapper from '../../ShadowWrapper';
+import Button from '../../../components/Button';
+import CircularButton from '../../../components/CircularButton';
+import BoardForm from '../../../components/BoardForm';
+import ShadowWrapper from '../../../components/ShadowWrapper';
 
 function BoardContentSection({ history, currBoard, onEdit, onRemove }) {
 	const [editing, toggleEditing] = useTogge();
@@ -64,4 +64,4 @@ function BoardContentSection({ history, currBoard, onEdit, onRemove }) {
 	);
 }
 
-export default BoardContentSection;
+export default React.memo(BoardContentSection);

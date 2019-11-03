@@ -117,4 +117,4 @@ function Boards() {
 	);
 }
 
-export default Boards;
+export default React.memo(Boards);

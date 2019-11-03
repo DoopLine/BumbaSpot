@@ -2,28 +2,24 @@ import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { MdEdit, MdAdd, MdClose } from 'react-icons/md';
 import useToggle from '../../hooks/useToggle';
-import  dispatch from "../../modules/card.actions";
-import  listDispatcher from "../../modules/list.actions";
-import { cardActionTypes, listActionTypes, sessionActionTypes } from '../../modules/actionTypes';
+import dispatch from '../../modules/card.actions';
+import listDispatcher from '../../modules/list.actions';
+import {
+	cardActionTypes,
+	listActionTypes,
+	sessionActionTypes,
+} from '../../modules/actionTypes';
 import { SessionContext } from '../../context/sessionContext';
 
-import {
-	Container,
-	LabelSection,
-	DescriptionSection,
-	TaskSection,
-	Progress,
-	TaskItem,
-	Header,
-} from './styled';
+import { Container, LabelSection, DescriptionSection, Header } from './styled';
 
-import Backdrop from '../Backdrop';
-import CheckBox from '../CheckBox';
-import CardForm from '../CardForm';
-import LabelForm from '../LabelForm';
-import CircularButton from '../CircularButton';
-import Label from '../Label';
-import Options from '../Options';
+import Backdrop from '../../components/Backdrop';
+import CardForm from '../../components/CardForm';
+import LabelForm from '../../components/LabelForm';
+import CircularButton from '../../components/CircularButton';
+import Label from '../../components/Label';
+
+import TaskSection from './TaskSection';
 
 function CardInfoSide() {
 	const history = useHistory();
@@ -38,7 +34,6 @@ function CardInfoSide() {
 
 	const [isEditingName, toggleIsEditingName] = useToggle();
 	const [isEditingDesc, toggleIsEditingDesc] = useToggle();
-	const [isEditingTask, toggleIsEditingTask] = useToggle();
 	const [hasLabelForm, toggleHasLabelForm] = useToggle();
 
 	const doneTasksCount = currCard.tasks.reduce((acc, cur) => {
@@ -67,7 +62,7 @@ function CardInfoSide() {
 
 	// Functions
 
-	function updateData(newCards){
+	function updateData(newCards) {
 		if (!newCards)
 			return console.log('Algo deu errado ao adicionar um novo card');
 
@@ -89,26 +84,48 @@ function CardInfoSide() {
 		});
 	}
 
-	function handleMarkAllTasksAs(state){
+	function handleMarkAllTasksAs(state) {
 		const newCards = dispatch({
 			type: cardActionTypes.MARK_ALL_TASKS_AS,
 			cardId,
 			state,
 			listId,
-			cards: list.cards
+			cards: list.cards,
 		});
 
 		updateData(newCards);
 	}
 
-	function handleRemoveCompleteTasks(){
+	function handleRemoveCompleteTasks() {
 		const newCards = dispatch({
 			type: cardActionTypes.REMOVE_COMPLETE_TASKS,
 			cardId,
 			listId,
-			cards: list.cards
+			cards: list.cards,
 		});
 
+		updateData(newCards);
+	}
+	function handleCreateNewTasks(inputVal) {
+		const newCards = dispatch({
+			type: cardActionTypes.CREATE_TASK,
+			content: inputVal,
+			id: currCard.id,
+			listId,
+			cards: list.cards,
+		});
+		updateData(newCards);
+	}
+
+	function handleChangeTaskState(id, isDone) {
+		const newCards = dispatch({
+			type: cardActionTypes.CHANGE_TASK_STATE,
+			cardId: currCard.id,
+			taskId: id,
+			state: !isDone,
+			listId,
+			cards: list.cards,
+		});
 		updateData(newCards);
 	}
 
@@ -118,7 +135,7 @@ function CardInfoSide() {
 			[keyName]: inputVal,
 			cardId,
 			listId,
-			cards: list.cards
+			cards: list.cards,
 		});
 
 		updateData(newCards);
@@ -135,7 +152,7 @@ function CardInfoSide() {
 				id: currCard.id,
 				color,
 				listId,
-				cards: list.cards
+				cards: list.cards,
 			});
 			updateData(newCards);
 			toggleHasLabelForm(false);
@@ -148,7 +165,7 @@ function CardInfoSide() {
 			cardId: currCard.id,
 			labelId: id,
 			listId,
-			cards: list.cards
+			cards: list.cards,
 		});
 		updateData(newCards);
 	};
@@ -223,70 +240,17 @@ function CardInfoSide() {
 							/>
 						)}
 					</DescriptionSection>
-					<TaskSection>
-						<Header>
-							<h2>Tarefas</h2>
-							<CircularButton
-								onClick={toggleIsEditingTask}
-								lint='Adicionar Tarefa'
-								small={true}>
-								{!isEditingTask ? <MdAdd /> : <MdClose />}
-							</CircularButton>
-							{<div style={{ margin: '0 .5rem' }}></div>}
-							<Options options={taskOptions} small={true} />
-						</Header>
-						{!currCard.tasks.length && <p>Sem Tarefas</p>}
-						{<div style={{ margin: '2rem 0' }}></div>}
-						{isEditingTask && (
-							<CardForm
-								keyName='newDesc'
-								info='Descreva a tarefa'
-								onSubmit={inputVal => {
-									const newCards = dispatch({
-										type: cardActionTypes.CREATE_TASK,
-										content: inputVal,
-										id: currCard.id,
-										listId,
-										cards: list.cards
-									});
-									updateData(newCards);
-									toggleIsEditingTask();
-								}}
-							/>
-						)}
-						{!!currCard.tasks.length && (
-							<TaskItem>
-								<span style={{ display: 'flex' }}>
-									<p style={{ marginRight: '.5rem' }}>{taskProgress}%</p>
-									<Progress value={taskProgress} max='100'></Progress>
-								</span>
-								{currCard.tasks.map(({ id, content, isDone }) => (
-									<CheckBox
-										onChange={() => {
-											const newCards = dispatch({
-												type: cardActionTypes.CHANGE_TASK_STATE,
-												cardId: currCard.id,
-												taskId: id,
-												state: !isDone,
-												listId,
-												cards: list.cards
-											});
-											updateData(newCards);
-										}}
-										key={id}
-										id={id}
-										title={content}
-										checked={isDone}
-										lineThrough={isDone && true}
-									/>
-								))}
-							</TaskItem>
-						)}
-					</TaskSection>
+					<TaskSection
+						currCard={currCard}
+						handleChangeTaskState={handleChangeTaskState}
+						handleCreateNewTasks={handleCreateNewTasks}
+						taskOptions={taskOptions}
+						taskProgress={taskProgress}
+					/>
 				</section>
 			</Container>
 		</>
 	);
 }
 
-export default CardInfoSide;
+export default React.memo(CardInfoSide);

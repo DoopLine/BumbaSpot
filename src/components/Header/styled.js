@@ -15,7 +15,7 @@ export const Container = styled.div`
 		font-size: 1rem;
 	}
 
-	button {
+	button:last-child {
 		display: flex;
 		align-items: center;
 		background-color: #00695c;
@@ -68,9 +68,16 @@ export const MainWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	max-width: 100%;
+	color: #fff;
+
 	p {
 		margin-right: 1rem;
 		font-size: 1.2rem;
+	}
+
+	& > button {
 		color: #fff;
+		font-size: 2rem;
+		margin-right: 2rem;
 	}
 `;

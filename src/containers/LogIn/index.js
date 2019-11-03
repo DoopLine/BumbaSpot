@@ -5,10 +5,11 @@ import {findUserByName} from '../../modules/storage';
 import { IoLogoFacebook, IoLogoGoogle } from 'react-icons/io';
 
 import { Container } from './styled';
-import ShadowWrapper from '../ShadowWrapper';
-import Input from '../Input';
-import Button from '../Button';
-import Notification from '../Notification';
+
+import ShadowWrapper from '../../components/ShadowWrapper';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+import Notification from '../../components/Notification';
 
 import {
 	sessionActionTypes,
@@ -82,4 +83,4 @@ function LogIn() {
 	);
 }
 
-export default LogIn;
+export default React.memo(LogIn);

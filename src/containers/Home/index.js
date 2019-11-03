@@ -2,7 +2,8 @@ import React from 'react';
 import {useHistory } from 'react-router-dom';
 
 import { Container, InfoSection, Footer } from './styled';
-import Button from '../Button';
+import Button from '../../components/Button';
+
 export default function Home () {
     const history = useHistory()
     return (

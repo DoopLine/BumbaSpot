@@ -30,6 +30,7 @@ export default function CardForm({
 			return;
 		}
 		toggleError(true);
+		// eslint-disable-next-line
 	}, [title]);
 
 	return (

@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { MdAdd, MdClose } from 'react-icons/md';
+
 import { listActionTypes, sessionActionTypes } from '../../modules/actionTypes';
 import dispatch from '../../modules/list.actions';
 import useToggle from '../../hooks/useToggle';
 
-import { MdAdd, MdClose } from 'react-icons/md';
-import List from '../List/index';
-import CircularButton from '../CircularButton';
-import ListForm from '../ListForm';
+import List from '../../components/List/index';
+import CircularButton from '../../components/CircularButton'; 
+import ListForm from '../../components/ListForm';
 
 import { Container, EmptyList } from './styled';
 
@@ -79,4 +80,4 @@ function Board() {
 	);
 }
 
-export default Board;
+export default React.memo(Board);

@@ -20,7 +20,7 @@ import CircularButton from '../CircularButton';
 import ListForm from '../ListForm';
 import Options from '../Options';
 
-export default function List({ data, index }) {
+function List({ data, index }) {
 	const { title, createble, isDone, id, cards } = data;
 
 	const { session, dispatch: sessionDispatch } = useContext(SessionContext);
@@ -181,3 +181,5 @@ export default function List({ data, index }) {
 		</Container>
 	);
 }
+
+export default React.memo(List);

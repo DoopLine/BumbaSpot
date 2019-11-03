@@ -2,11 +2,11 @@ import React from 'react';
 import useToggle from '../../../hooks/useToggle';
 import { Container, BoardGrid } from './styled';
 
-import ShadowWrapper from '../../ShadowWrapper';
-import BoardForm from '../../BoardForm';
-import Button from '../../Button';
+import ShadowWrapper from '../../../components/ShadowWrapper';
+import BoardForm from '../../../components/BoardForm';
+import Button from '../../../components/Button';
 
-export default function BoardHeader({
+function BoardHeader({
 	boardsLength,
 	creating,
 	toggleCreating,
@@ -42,3 +42,5 @@ export default function BoardHeader({
 		</ShadowWrapper>
 	);
 }
+
+export default React.memo(BoardHeader);

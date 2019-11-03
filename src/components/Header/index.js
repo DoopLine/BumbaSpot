@@ -1,16 +1,17 @@
 import React, { useContext } from 'react';
 import useToggle from '../../hooks/useToggle';
 import { useHistory } from 'react-router-dom';
-import { MdPerson } from 'react-icons/md';
+import { MdPerson, MdMenu } from 'react-icons/md';
 import { Container, MainWrapper } from './styled';
 
 //Components
 import UserActionBox from '../UserActionBox';
+import CircularButton from '../CircularButton';
 
 import { sessionActionTypes } from '../../modules/actionTypes';
 import { SessionContext } from '../../context/sessionContext';
 
-export default function Header() {
+export default function Header({ toggleShowSideNav }) {
 	const history = useHistory();
 
 	const [showUserActions, toggleShowUserActions] = useToggle();
@@ -37,6 +38,12 @@ export default function Header() {
 	return (
 		<Container>
 			<MainWrapper>
+				<CircularButton
+					onClick={toggleShowSideNav}
+					lint='Alternar barra de navegação'
+					secondary={true}>
+					<MdMenu />
+				</CircularButton>
 				<p className='truncate' title={getText()}>
 					{getText()}
 				</p>
