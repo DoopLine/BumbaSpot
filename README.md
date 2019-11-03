@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+BumbaSpot is  a project manager that heplps you manage your project.
 
 ## Available Scripts
 
